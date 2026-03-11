@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from rag.embeddings import get_embeddings
 
