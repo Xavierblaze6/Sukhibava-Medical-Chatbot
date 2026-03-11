@@ -1,5 +1,6 @@
 """Chainlit entry point for the Sukhibava medical RAG chatbot."""
 
+import os
 from contextvars import ContextVar
 from importlib import import_module
 
@@ -9,6 +10,9 @@ from langchain_core.callbacks.base import AsyncCallbackHandler
 
 from rag.pipeline import build_rag_chain
 from rag.vectorstore import load_vectorstore
+
+
+PORT = int(os.environ.get("PORT", 8000))
 
 
 chainlit_context_module = import_module("chainlit.context")

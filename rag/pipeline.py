@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from langchain.memory import ConversationBufferWindowMemory
+from langchain.memory import ConversationBufferMemory
+from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain.schema import Document
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate
 from langchain_openai import ChatOpenAI
@@ -24,8 +25,14 @@ class SukhibavaRAGChain:
 
     retriever: Any
     llm: ChatOpenAI
-    memory: ConversationBufferWindowMemory
+    memory: ConversationBufferMemory
     prompt: ChatPromptTemplate
+
+    @staticmethod
+    def _trim_chat_history(chat_history: InMemoryChatMessageHistory, max_turns: int = 5) -> None:
+        max_messages = max_turns * 2
+        if len(chat_history.messages) > max_messages:
+            chat_history.messages = chat_history.messages[-max_messages:]
 
     @staticmethod
     def _format_context(documents: List[Document]) -> str:
@@ -46,6 +53,7 @@ class SukhibavaRAGChain:
         response = await self.llm.ainvoke(prompt_value.to_messages(), config=config)
         answer = response.content if isinstance(response.content, str) else str(response.content)
         await self.memory.asave_context({"question": question}, {"answer": answer})
+        self._trim_chat_history(self.memory.chat_memory)
         return {
             "answer": answer,
             "source_documents": source_documents,
@@ -60,8 +68,8 @@ def build_rag_chain(vectorstore):
     """Create the conversational RAG runner with memory and source document exposure."""
     load_dotenv()
 
-    memory = ConversationBufferWindowMemory(
-        k=5,
+    memory = ConversationBufferMemory(
+        chat_memory=InMemoryChatMessageHistory(),
         memory_key="chat_history",
         input_key="question",
         output_key="answer",
