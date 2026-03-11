@@ -5,8 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 from langchain.memory import ConversationBufferWindowMemory
-from langchain.schema import Document
-from langchain.memory import ConversationBufferWindowMemory
+from langchain_core.schema import Document
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 

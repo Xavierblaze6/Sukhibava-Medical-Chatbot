@@ -1,5 +1,6 @@
 chainlit
 langchain
+langchain-core
 langchain-text-splitters
 langchain-openai
 langchain-community

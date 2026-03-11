@@ -5,7 +5,7 @@ from importlib import import_module
 
 import chainlit as cl
 from dotenv import load_dotenv
-from langchain.callbacks.base import AsyncCallbackHandler
+from langchain_core.callbacks.base import AsyncCallbackHandler
 
 from rag.pipeline import build_rag_chain
 from rag.vectorstore import load_vectorstore
