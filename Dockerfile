@@ -2,12 +2,17 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+RUN useradd -m -u 1000 user
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY . /app
 
 RUN python ingest.py
+
+USER user
+ENV PATH="/home/user/.local/bin:$PATH"
 
 EXPOSE 7860
 
