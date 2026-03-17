@@ -4,12 +4,15 @@ RUN useradd -m -u 1000 user
 
 WORKDIR /home/user/app
 
-COPY --chown=user:user requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=user:user . .
+COPY . .
 
 RUN python ingest.py
+
+RUN mkdir -p /home/user/app/.files && \
+	chown -R user:user /home/user/app
 
 USER user
 ENV PATH="/home/user/.local/bin:$PATH"
