@@ -38,6 +38,19 @@ class SukhibavaRAGChain:
     def _format_context(documents: List[Document]) -> str:
         return "\n\n".join(document.page_content for document in documents)
 
+    @staticmethod
+    def _serialize_documents(documents: List[Document]) -> List[Dict[str, Any]]:
+        serialized_documents: List[Dict[str, Any]] = []
+        for document in documents:
+            serialized_documents.append(
+                {
+                    "page_content": document.page_content,
+                    "metadata": document.metadata,
+                    "type": getattr(document, "type", "Document"),
+                }
+            )
+        return serialized_documents
+
     async def ainvoke(self, inputs: Dict[str, Any], config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Retrieve relevant chunks, answer with the LLM, and persist chat memory."""
         question = inputs["question"]
@@ -56,7 +69,7 @@ class SukhibavaRAGChain:
         self._trim_chat_history(self.memory.chat_memory)
         return {
             "answer": answer,
-            "source_documents": source_documents,
+            "source_documents": self._serialize_documents(source_documents),
         }
 
     async def acall(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
